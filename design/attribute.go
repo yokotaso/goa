@@ -7,7 +7,7 @@ import (
 )
 
 type (
-	// AttributeExpr defines a object field with optional description,
+	// AttributeExpr defines an object field with optional description,
 	// default value and validations.
 	AttributeExpr struct {
 		// DSLFunc contains the DSL used to initialize the expression.

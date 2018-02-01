@@ -1,6 +1,7 @@
 package generator
 
 import (
+	//"fmt"
 	"go/build"
 	"os"
 	"path/filepath"

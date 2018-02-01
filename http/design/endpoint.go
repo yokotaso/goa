@@ -510,10 +510,10 @@ func (e *EndpointExpr) Finalize() {
 				var patt *design.AttributeExpr
 				var required bool
 				if payload != nil {
-					att = payload.Attribute(n)
+					patt = payload.Attribute(n)
 					required = e.MethodExpr.Payload.IsRequired(n)
 				} else {
-					att = e.MethodExpr.Payload
+					patt = e.MethodExpr.Payload
 					required = true
 				}
 				initAttrFromDesign(att, patt)

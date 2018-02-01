@@ -1,7 +1,9 @@
 package design
 
-import . "goa.design/goa/http/design"
+import . "goa.design/goa/design"
+import httpdesign "goa.design/goa/http/design"
 import . "goa.design/goa/http/dsl"
+import . "goa.design/goa/grpc/dsl"
 
 // API describes the global properties of the API server.
 var _ = API("calc", func() {
@@ -18,13 +20,17 @@ var _ = Service("calc", func() {
 		// Here the payload is an object that consists of two fields
 		Payload(func() {
 			// Attribute describes an object field
-			Attribute("a", Int, "Left operand")
-			Attribute("b", Int, "Right operand")
+			Attribute("a", Int, "Left operand", func() {
+				Metadata("rpc:tag", "1")
+			})
+			Field(2, "b", Int, "Right operand")
 			Required("a", "b")
 		})
 		// Result describes the method result
 		// Here the result is a simple integer value
-		Result(Int)
+		Result(Int, func() {
+			Metadata("rpc:tag", "1")
+		})
 		// HTTP describes the HTTP transport mapping
 		HTTP(func() {
 			// Requests to the service consist of HTTP GET requests
@@ -32,8 +38,10 @@ var _ = Service("calc", func() {
 			GET("/add/{a}/{b}")
 			// Responses use a "200 OK" HTTP status
 			// The result is encoded in the response body
-			Response(StatusOK)
+			Response(httpdesign.StatusOK)
 		})
+
+		GRPC(func() {})
 	})
 })
 
