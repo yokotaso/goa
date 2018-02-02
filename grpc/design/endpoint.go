@@ -49,6 +49,25 @@ func (e *EndpointExpr) EvalName() string {
 	return prefix + suffix
 }
 
+func (e *EndpointExpr) Validate() {
+	validateRequestMessage(e)
+}
+
+func validateRequestMessage(e) {
+	if e.Request != nil {
+		if obj := design.AsObject(e.Request.Type); obj != nil {
+			pObj := design.AsObject(e.MethodExpr.Payload)
+			for _, nat := range *obj {
+				n := strings.Split(nat.Name, ":")[0]
+				var found, hasRPCTag bool
+				for _, o := range *pObj {
+
+				}
+			}
+		}
+	}
+}
+
 // Finalize is run post DSL execution. It initializes the request and response
 // attributes if not initialized.
 func (e *EndpointExpr) Finalize() {
@@ -63,6 +82,7 @@ func (e *EndpointExpr) Finalize() {
 // attribute is already initialized, it overrides the target with src.
 func initAttr(target, src *design.AttributeExpr, name, suffix string) *design.AttributeExpr {
 	if target != nil {
+		// Target already initialized. Override the target with src.
 		if obj := design.AsObject(target.Type); obj != nil {
 			for _, nat := range *obj {
 				n := strings.Split(nat.Name, ":")[0]
@@ -78,29 +98,27 @@ func initAttr(target, src *design.AttributeExpr, name, suffix string) *design.At
 		}
 		return target
 	}
-	if !design.IsObject(src.Type) {
+	srcObj := design.AsObject(src.Type)
+	if srcObj == nil {
+		// src is not an object.
 		attr := design.DupAtt(src)
 		renameType(attr, name, suffix)
-		target = attr
-	} else {
-		matt := design.NewMappedAttributeExpr(src)
-		if len(*design.AsObject(matt.Type)) == 0 {
-			target = &design.AttributeExpr{Type: design.Empty}
-		} else {
-			att := matt.Attribute()
-			ut := &design.UserTypeExpr{
-				AttributeExpr: att,
-				TypeName:      name,
-			}
-			appendSuffix(ut.Attribute().Type, suffix)
-			target = &design.AttributeExpr{
-				Type:         ut,
-				Validation:   att.Validation,
-				UserExamples: att.UserExamples,
-			}
-		}
+		return attr
 	}
-	return target
+	if len(*srcObj) == 0 {
+		// src is an object but does not have any attributes.
+		return &design.AttributeExpr{Type: design.Empty}
+	}
+	ut := &design.UserTypeExpr{
+		AttributeExpr: src,
+		TypeName:      name,
+	}
+	appendSuffix(ut.Attribute().Type, suffix)
+	return &design.AttributeExpr{
+		Type:         ut,
+		Validation:   att.Validation,
+		UserExamples: att.UserExamples,
+	}
 }
 
 // initAttrFromDesign overrides the type of att with the one of patt and
@@ -131,6 +149,7 @@ func initAttrFromDesign(att, patt *design.AttributeExpr) {
 	}
 }
 
+// renameType renames the attribute type with the given name and suffix.
 func renameType(att *design.AttributeExpr, name, suffix string) {
 	rt := att.Type
 	switch rt.(type) {
@@ -151,6 +170,7 @@ func renameType(att *design.AttributeExpr, name, suffix string) {
 	att.Type = rt
 }
 
+// appendSuffix renames the given type by appending the suffix.
 func appendSuffix(dt design.DataType, suffix string, seen ...map[string]struct{}) {
 	switch actual := dt.(type) {
 	case design.UserType:

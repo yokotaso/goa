@@ -22,8 +22,10 @@ type (
 	// ServiceData contains the data used to render the code related to a
 	// single service.
 	ServiceData struct {
-		// Service contains the related service data.
-		Service *service.Data
+		// Name is the service name.
+		Name string
+		// Description is the service description.
+		Description string
 		// Endpoints describes the gRPC service endpoints.
 		Endpoints []*EndpointData
 		// Messages describes the message data for this service.
@@ -50,6 +52,8 @@ type (
 		Name string
 		// Description is the description for the message.
 		Description string
+		// Messages is the nested messages.
+		Messages []*MessageData
 		// Fields are the fields in the message.
 		Fields []*FieldData
 	}
@@ -83,13 +87,13 @@ func (d ServicesData) Get(name string) *ServiceData {
 
 // analyze creates the data necessary to render the code of the given service.
 func (d ServicesData) analyze(gs *grpcdesign.ServiceExpr) *ServiceData {
-	svc := service.Services.Get(gs.ServiceExpr.Name)
-	rd := &ServiceData{
-		Service: svc,
+	sd := &ServiceData{
+		Name:        codegen.Goify(gs.Name(), true),
+		Description: gs.Description(),
 	}
 
 	for _, e := range gs.GRPCEndpoints {
-		m := svc.Method(e.MethodExpr.Name)
+		/*m := svc.Method(e.MethodExpr.Name)
 		var (
 			reqName = m.Payload
 			resName = m.Result
@@ -103,15 +107,15 @@ func (d ServicesData) analyze(gs *grpcdesign.ServiceExpr) *ServiceData {
 		req := buildMessageData(reqName, e.Request)
 		rd.Messages = append(rd.Messages, req)
 		res := buildMessageData(resName, e.Response)
-		rd.Messages = append(rd.Messages, res)
-		rd.Endpoints = append(rd.Endpoints, &EndpointData{
-			Name:        m.Name,
-			Description: m.Description,
-			Request:     req.Name,
-			Response:    res.Name,
+		rd.Messages = append(rd.Messages, res)*/
+		sd.Endpoints = append(sd.Endpoints, &EndpointData{
+			Name:        codegen.Goify(e.Name(), true),
+			Description: e.Description(),
+			//Request:     req.Name,
+			//Response:    res.Name,
 		})
 	}
-	return rd
+	return sd
 }
 
 // buildMessageData builds the MessageData for the given method and request/response.

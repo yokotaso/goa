@@ -32,8 +32,8 @@ func proto(genpkg string, svc *grpcdesign.ServiceExpr) *codegen.File {
 	return &codegen.File{Path: path, SectionTemplates: sections}
 }
 
-const grpcServiceT = `{{ .Service.Description | comment }}
-service {{ .Service.VarName }} {
+const grpcServiceT = `{{ .Description | comment }}
+service {{ .Name }} {
 	{{- range .Endpoints }}
 	{{ .Description | comment }}
 	rpc {{ .Name }} ({{ .Request }}) returns ({{ .Response }}) {}

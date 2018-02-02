@@ -311,7 +311,7 @@ func (e *EndpointExpr) Validate() error {
 					verr.Add(e, "Payload type is array but HTTP endpoint defines multiple headers. At most one header must be defined and it must be an array.")
 				}
 			}
-			if e.Body != nil && e.Body.Type != design.Empty {
+			if e.Body != nil && e.Body.Type != design.Empty && e.Body != design.UserType {
 				if !design.IsArray(e.Body.Type) {
 					verr.Add(e, "Payload type is array but HTTP endpoint body is not.")
 				}
@@ -352,7 +352,7 @@ func (e *EndpointExpr) Validate() error {
 			if ln := len(*design.AsObject(e.Headers().Type)); ln > 0 {
 				verr.Add(e, "Payload type is map but HTTP endpoint defines headers. Map payloads can only be decoded from HTTP request bodies or query strings.")
 			}
-			if e.Body != nil && e.Body.Type != design.Empty {
+			if e.Body != nil && e.Body.Type != design.Empty && e.Body.Type != design.UserType {
 				if !design.IsMap(e.Body.Type) {
 					verr.Add(e, "Payload type is map but HTTP endpoint body is not.")
 				}
@@ -405,7 +405,7 @@ func (e *EndpointExpr) Validate() error {
 					verr.Add(e, "Param %q is not found in Payload.", nat.Name)
 				}
 			}
-			if e.Body != nil {
+			if e.Body != nil && e.Body.Type == e.MethodExpr.Payload.Type {
 				if bObj := design.AsObject(e.Body.Type); bObj != nil {
 					for _, nat := range *bObj {
 						found := false
