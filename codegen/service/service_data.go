@@ -221,6 +221,16 @@ func (d ServicesData) analyze(service *design.ServiceExpr) *Data {
 			errorInits = append(errorInits, buildErrorInitData(er, scope))
 		}
 	}
+	for _, t := range design.Root.Types {
+		if svcs, ok := t.Attribute().Metadata["type:generate:force"]; ok {
+			for _, svc := range svcs {
+				if svc == service.Name {
+					types = append(types, collectTypes(t.Attribute(), seen, scope)...)
+					break
+				}
+			}
+		}
+	}
 
 	var (
 		methods []*MethodData

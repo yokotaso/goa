@@ -12,7 +12,30 @@ import (
 // services and API definitions.
 //
 // While keys can have any value the following names are handled explicitly by
-// goa when set on attributes.
+// goa when set on attributes or types.
+//
+// type:generate:force specified on a Type will generate a Go struct in the
+// service packages specified in the value. This Type definition can exist in
+// an external package and must be imported in the API design.
+//
+//        package my_package
+//
+//        var ExternalType = Type("ExternalType", func() {
+//                Attribute("name", String)
+//                Metadata("type:generate:force", service1, service2)
+//        })
+//
+//        package design
+//
+//        import _ "my_package"
+//
+//        var _ = Service("service1", func() {
+//                ...
+//        })
+//
+//        var _ = Service("service2", func() {
+//                ...
+//        })
 //
 // struct:error:name identifies the attribute of a result type used to select
 // the returned error when multiple errors are defined on the same method.
