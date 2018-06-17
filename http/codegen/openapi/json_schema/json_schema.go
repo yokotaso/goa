@@ -1,4 +1,4 @@
-package openapi
+package json_schema
 
 import (
 	"encoding/json"
@@ -467,18 +467,18 @@ func buildAttributeSchema(api *design.APIExpr, s *Schema, at *design.AttributeEx
 
 // toStringMap converts map[interface{}]interface{} to a map[string]interface{}
 // when possible.
-func toStringMap(val interface{}) interface{} {
+func ToStringMap(val interface{}) interface{} {
 	switch actual := val.(type) {
 	case map[interface{}]interface{}:
 		m := make(map[string]interface{})
 		for k, v := range actual {
-			m[toString(k)] = toStringMap(v)
+			m[toString(k)] = ToStringMap(v)
 		}
 		return m
 	case []interface{}:
 		mapSlice := make([]interface{}, len(actual))
 		for i, e := range actual {
-			mapSlice[i] = toStringMap(e)
+			mapSlice[i] = ToStringMap(e)
 		}
 		return mapSlice
 	default:

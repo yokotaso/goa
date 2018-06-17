@@ -1,8 +1,8 @@
-package openapi
+package v2
 
 import (
 	"encoding/json"
-
+	. "github.com/goadesign/goa/http/codegen/openapi/json_schema"
 	"goa.design/goa/design"
 )
 

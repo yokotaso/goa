@@ -1,4 +1,4 @@
-package openapi
+package v2
 
 // New creates a OpenAPI spec from a HTTP root expression.
 import (
@@ -13,6 +13,7 @@ import (
 	"goa.design/goa/codegen"
 	"goa.design/goa/design"
 	httpdesign "goa.design/goa/http/design"
+	. "github.com/goadesign/goa/http/codegen/openapi/json_schema"
 )
 
 // NewV2 returns the OpenAPI v2 specification for the given API.
