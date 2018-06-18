@@ -376,7 +376,7 @@ func paramFor(at *design.AttributeExpr, name, in string, required bool) *Paramet
 	p := &Parameter{
 		In:          in,
 		Name:        name,
-		Default:     toStringMap(at.DefaultValue),
+		Default:     ToStringMap(at.DefaultValue),
 		Description: at.Description,
 		Required:    required,
 		Type:        at.Type.Name(),
